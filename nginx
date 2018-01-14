@@ -1,0 +1,128 @@
+#!/bin/bash
+# chkconfig: 345 20 80
+# description: controll the nginx web server as a service
+
+# Source function library.
+. /etc/init.d/functions
+
+
+SERVICE=/usr/local/nginx/sbin/nginx
+PID_FILE=/usr/local/nginx/logs/nginx.pid
+PROCESS_NAME=nginx
+SERVICE_NAME=nginx
+USERNAME=root
+
+# -------- Core functions --------
+
+# Start the process
+function start_service {
+  echo "Starting $SERVICE_NAME ..."
+  su - $USERNAME -c "$SERVICE"
+  if [ $? -eq 0 ]
+    then
+    echo "Successfully started $SERVICE_NAME"
+    return 0
+  else
+    echo "Failed to start $SERVICE_NAME !"
+    return 1
+  fi
+}
+
+# Stop the process
+function stop_service {
+  echo "Stopping $SERVICE_NAME ..."
+  su - $USERNAME -c "$SERVICE -s stop"
+  if [ $? -eq 0 ]
+    then
+    echo "Successfully stopped $SERVICE_NAME"
+    return 0
+  else
+    echo "Failed to stop $SERVICE_NAME !"
+    return 1
+  fi
+}
+
+# Reload the configurations
+function reload_service {
+  echo "Reloading $SERVICE_NAME ..."
+  su - $USERNAME -c "$SERVICE -s reload"
+  if [ $? -eq 0 ]
+    then
+    echo "Successfully reloaded $SERVICE_NAME"
+    return 0
+  else
+    echo "Failed to reloaded $SERVICE_NAME !"
+    return 1
+  fi
+}
+
+
+# Check status
+function check_status {
+  # Check for PID_FILE
+  if [ -f $PID_FILE ]
+    then
+    PID=`cat $PID_FILE`
+    PCOUNT=`su - $USERNAME -c "ps -ef | grep $PID | grep $PROCESS_NAME | grep -v grep | wc -l"`
+
+    if [ $PCOUNT -gt 0 ]
+      then
+      echo "$SERVICE_NAME is running"
+      return 0
+    else
+      echo "$SERVICE_NAME is NOT running. But PID file exists. Must be an unexpected crash"
+      return 1 
+    fi
+  else
+    echo "$SERVICE_NAME is NOT running."
+    return 1 
+  fi
+}
+
+# -------------------------------------
+
+case "$1" in
+  start)
+    check_status
+    if [ $? -eq 1 ]
+      then
+      start_service
+    fi
+    ;;
+
+  stop)
+    check_status
+    if [ $? -eq 0 ]
+      then
+      stop_service
+    fi
+    ;;
+
+  restart)
+    check_status
+    if [ $? -eq 0 ]
+      then
+      stop_service
+    fi
+    start_service
+    ;;
+
+  reload)
+    check_status
+    if [ $? -eq 0 ]
+      then
+      reload_service
+    fi
+    ;;
+
+  status)
+    check_status
+    ;;
+
+  *)
+    echo "Usage: service $SERVICE_NAME {start|stop|restart|reload|status}" >&2
+    exit 1
+    ;;
+esac
+
+exit 0
