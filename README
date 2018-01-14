@@ -1,0 +1,8 @@
+This repo contains chkconfig compliant init scripts for commonly used applications
+that you can use to control them as standard linux services.
+
+Example:
+	- Automatically start at system boot
+	- Set start-up sequences
+	- Check status for monitoring purposes
+	- Reload / restart with pre-defined settings
