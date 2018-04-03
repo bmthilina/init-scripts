@@ -17,7 +17,7 @@ USERNAME=node_exporter
 # Start the process
 function start_service {
   echo "Starting $SERVICE_NAME ..."
-  su - $USERNAME -c "$SERVICE"
+  sudo -u $USERNAME bash -c "$SERVICE"
   if [ $? -eq 0 ]
     then
     echo "Successfully started $SERVICE_NAME"
@@ -31,7 +31,7 @@ function start_service {
 # Stop the process
 function stop_service {
   echo "Stopping $SERVICE_NAME ..."
-  su - $USERNAME -c "pkill $SERVICE_NAME"
+  sudo -u $USERNAME bash -c "pkill $SERVICE_NAME"
   if [ $? -eq 0 ]
     then
     echo "Successfully stopped $SERVICE_NAME"
@@ -45,7 +45,7 @@ function stop_service {
 # Check status
 function check_status {
   # Check for PID_FILE
-  PCOUNT=`su - $USERNAME -c "ps -ef | grep $SERVICE_NAME | grep -v grep | wc -l"`
+  PCOUNT=`sudo -u $USERNAME bash -c "ps -ef | grep $SERVICE_NAME | grep -v grep | wc -l"`
 
   if [ $PCOUNT -gt 0 ]
     then
