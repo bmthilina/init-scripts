@@ -6,11 +6,10 @@
 . /etc/init.d/functions
 
 
-SERVICE=/usr/local/node_exporter/node_exporter
-PROCESS_NAME=/usr/local/node_exporter/node_exporter
+SERVICE=/usr/local/bin/node_exporter
+PROCESS_NAME=/usr/local/bin/node_exporter
 SERVICE_NAME=node_exporter
 USERNAME=node_exporter
-
 
 # -------- Core functions --------
 
