@@ -16,7 +16,7 @@ USERNAME=node_exporter
 # Start the process
 function start_service {
   echo "Starting $SERVICE_NAME ..."
-  sudo -u $USERNAME bash -c "$SERVICE" &
+  sudo -u $USERNAME bash -c "$SERVICE" > /dev/null &
   if [ $? -eq 0 ]
     then
     echo "Successfully started $SERVICE_NAME"
